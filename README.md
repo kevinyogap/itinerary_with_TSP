@@ -13,33 +13,57 @@ A RESTful API service for generating personalized travel itineraries for Lake To
 ## System Architecture
 
 ```mermaid
-graph TD
-    A[Mobile App/Client] -->|HTTP Requests| B[Flask API Server]
+flowchart TD
+    A[Mobile App/Client] 
+    A -->|HTTP POST Request| B[Flask API Server]
+    
     B --> C[TobaItineraryService]
+    
     C --> D[Data Loading Module]
     D --> E[GitHub CSV Data Sources]
-    E --> F[Tourism Spots Data]
-    E --> G[Hotels Data]
-    E --> H[Processed Features Data]
+    E --> F[Tourism Spots Data<br/>data_wisata_toba_score.csv]
+    E --> G[Hotels Data<br/>data_akomodasi_danau_toba_v2.csv]
+    E --> H[Processed Features Data<br/>data_ProcessedZ.csv]
     
     C --> I[Recommendation Engine]
-    I --> J[TF-IDF Vectorizer]
-    I --> K[Cosine Similarity]
+    I --> J[TF-IDF Vectorizer<br/>Text Processing]
+    J --> K[Cosine Similarity<br/>Matching Algorithm]
+    K --> L[Top N Recommendations]
     
-    C --> L[Route Optimizer]
-    L --> M[Geopy Distance Calculator]
-    L --> N[Greedy Algorithm]
+    C --> M[Hotel Finder]
+    M --> N[Geopy Distance Calculator<br/>Find Hotels within 15km]
+    N --> O[Sort by Distance & Price]
     
-    C --> O[Cost Calculator]
-    C --> P[Hotel Finder]
+    C --> P[Route Optimizer]
+    P --> Q[Greedy Algorithm<br/>Nearest Neighbor]
+    Q --> R[Time Constraint Validation<br/>Max 8 hours]
+    R --> S[Optimized Route]
     
-    B -->|JSON Response| A
+    C --> T[Cost Calculator]
+    T --> U[Tourism Costs<br/>Entrance + Parking Fees]
+    T --> V[Hotel Costs<br/>Price × Nights]
+    T --> W[Transport Estimate<br/>IDR 200k/day]
+    U --> X[Total Trip Cost]
+    V --> X
+    W --> X
+    
+    X --> Y[Budget Validation]
+    S --> Z[Complete Itinerary]
+    L --> Z
+    O --> Z
+    Y --> Z
+    
+    Z --> AA[JSON Response]
+    AA -->|HTTP Response| A
     
     style A fill:#e1f5fe
     style B fill:#f3e5f5
     style C fill:#e8f5e8
     style I fill:#fff3e0
-    style L fill:#ffebee
+    style M fill:#e8f5e8
+    style P fill:#ffebee
+    style T fill:#f1f8e9
+    style Z fill:#fce4ec
 ```
 
 ## Data Flow
